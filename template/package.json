@@ -9,5 +9,10 @@
     "alpine": "^0.0.1",
     "require-all": "^3.0.0",
     "v8n": "^1.2.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
