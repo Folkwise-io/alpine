@@ -19,6 +19,7 @@ module.exports = (args, options, logger) => {
 
   // Copy the template to the local path
   shell.cp('-R', `${templatePath}/*`, localPath);
+  shell.cp('-R', `${templatePath}/.*`, localPath);
 
   logger.info('The files have been copied!');
 

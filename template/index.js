@@ -1,6 +1,4 @@
 const { Alpine } = require('alpine');
+const cfg = require('./alpine.conf');
 
-module.exports = Alpine({
-  methodsPath: `${__dirname}/methods`,
-  testsPath: `${__dirname}/tests`,
-});
+module.exports = Alpine(cfg);
