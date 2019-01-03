@@ -1,0 +1,13 @@
+{
+  "name": "[NAME]",
+  "version": "0.0.1",
+  "description": "[DESCRIPTION]",
+  "main": "index.js",
+  "author": "[AUTHOR]",
+  "license": "[LICENSE]",
+  "dependencies": {
+    "alpine": "^0.0.1",
+    "require-all": "^3.0.0",
+    "v8n": "^1.2.3"
+  }
+}

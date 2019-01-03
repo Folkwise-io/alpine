@@ -1,0 +1,24 @@
+{
+  "name": "alpine",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "alpine": "./cli/index.js"
+  },
+  "author": "Zero Projects, Inc",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "caporal": "^1.1.0",
+    "colors": "^1.3.3",
+    "prompt": "^1.0.0",
+    "require-all": "^3.0.0",
+    "shelljs": "^0.8.3",
+    "v8n": "^1.2.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.11.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
