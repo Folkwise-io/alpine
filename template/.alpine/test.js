@@ -11,5 +11,9 @@ describe(libraryName, () => {
     recursive: true,
   });
 
-  Object.values(tests).forEach(test => test(library));
+  Object.keys(tests).forEach(testFileName => {
+    const name = testFileName.substring(0, testFileName.length - '.test'.length);
+    const unitTest = tests[testFileName];
+    describe(`#${name}()`, () => unitTest(library));
+  });
 });
