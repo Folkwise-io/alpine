@@ -1,11 +1,13 @@
 const fs = require('fs-extra');
 const path = require('path');
-const utils = require('../utils');
 const shelljs = require('shelljs');
-const { bold, green, red, cyan } = require('colors');
 const prompt = require('prompt');
+const {
+  bold, green, red, cyan,
+} = require('colors');
 
-const version = require('../../package.json').version;
+const { version } = require('../../package.json');
+const utils = require('../utils');
 
 const TEMPLATE_PATH = path.resolve(__dirname, '../../template');
 
@@ -43,61 +45,62 @@ function useOrCreateEmptyDirectory(filepath) {
     if (!nodeExists) {
       fs.mkdirSync(filepath);
       return true;
-    } else if (isDirectory && isEmpty) {
-      return true;
-    } else {
-      return false;
     }
+    if (isDirectory && isEmpty) {
+      return true;
+    }
+
+    return false;
   } catch (e) {
-    console.error(e);
+    console.error(e); // eslint-disable-line
     return false;
   }
 }
 
-async function projectPrompts(projectName) {
-  return await (new Promise((resolve, reject) => {
+function projectPrompts(projectName) {
+  return new Promise((resolve, reject) => {
     const schema = {
       properties: {
         author: {
           description: 'Project author',
-          required: true
+          required: true,
         },
         name: {
           description: 'Project name',
           default: projectName,
-          required: true
+          required: true,
         },
         description: {
           description: 'Project description',
           default: 'Alpine CLI Project',
-          required: true
+          required: true,
         },
         license: {
-          //TODO: validate npmjs-supported licenses
+          // TODO: validate npmjs-supported licenses
           description: 'Project license',
           default: 'UNLICENSED',
-          required: true
+          required: true,
         },
         private: {
           description: 'Private project?',
           type: 'boolean',
-          default: true
-        }
-      }
+          default: true,
+        },
+      },
     };
 
     prompt.start();
 
-    prompt.get(schema, function(err, result) {
+    prompt.get(schema, (err, result) => {
       if (err) reject(err);
       resolve(result);
-    })
-  }));
+    });
+  });
 }
 
 module.exports = async ({ projectName }, options, logger) => {
-  console.log(`${ALPINE_TEXT}`);
-  console.log(bold(cyan(`Creating project ${projectName}`)));
+  logger.info(`${ALPINE_TEXT}`);
+  logger.info(bold(cyan(`Creating project ${projectName}`)));
   const dstFolderPath = path.resolve(process.cwd(), projectName);
 
   if (!useOrCreateEmptyDirectory(dstFolderPath)) {
@@ -112,7 +115,7 @@ module.exports = async ({ projectName }, options, logger) => {
   try {
     it.project = await projectPrompts(projectName);
   } catch (e) {
-    console.error(e);
+    console.error(e); // eslint-disable-line
     logger.error(`${red('Failed to create project. See error above for details.')}`);
     return;
   }
@@ -123,27 +126,26 @@ module.exports = async ({ projectName }, options, logger) => {
     // -R: recursive
     // -l: list objects representing each file, each with fields containing ls -l output fields. See fs.Stats
     .ls('-ARl', TEMPLATE_PATH)
-    .map(({name}) => ({
+    .map(({ name }) => ({
       name,
       srcPath: path.resolve(TEMPLATE_PATH, name),
-      dstPath: path.resolve(dstFolderPath, name)
+      dstPath: path.resolve(dstFolderPath, name),
     }))
     // ignore non-files
-    .filter(({srcPath}) => fs.lstatSync(srcPath).isFile())
+    .filter(({ srcPath }) => fs.lstatSync(srcPath).isFile())
     // sort by name
-    .sort(({name: nameA}, {name: nameB}) => nameA >= nameB ? 1 : -1);
+    .sort(({ name: nameA }, { name: nameB }) => (nameA >= nameB ? 1 : -1));
 
   // process the templates
-  filepaths.forEach(file => {
-    file.content = utils.processTemplate(file.srcPath, it);
-  });
+  filepaths.forEach(file => Object.assign(file, {
+    content: utils.processTemplate(file.srcPath, it),
+  }));
 
   // write the files
-  filepaths.forEach(({name, dstPath, content}) => {
-    console.log(`\t${bold(green('create'))}\t${name}`);
+  filepaths.forEach(({ name, dstPath, content }) => {
+    logger.info(`\t${bold(green('create'))}\t${name}`);
     fs.outputFileSync(dstPath, content, 'utf8');
   });
 
-  console.log(bold(cyan('Finished!')));
-}
-
+  logger.log(bold(cyan('Finished!')));
+};
