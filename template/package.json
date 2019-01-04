@@ -1,10 +1,11 @@
 {
-  "name": "[NAME]",
+  "name": "{{=it.project.name}}",
   "version": "0.0.1",
-  "description": "[DESCRIPTION]",
+  "description": "{{=it.project.description}}",
   "main": "index.js",
-  "author": "[AUTHOR]",
-  "license": "[LICENSE]",
+  "author": "{{=it.project.author}}",
+  "license": "{{=it.project.license}}",
+  "private": "{{=it.project.private}}",
   "scripts": {
     "test": "mocha ./.alpine/test.js"
   },
