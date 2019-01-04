@@ -10,7 +10,7 @@ prog
 
   // Create <new> command
   .command('new', 'Create a new Alpine project')
-  .argument('<name>', 'Name of the project')
+  .argument('<projectName>', 'Name of the project')
   .action(initializeCmd);
 
 prog.parse(process.argv);
