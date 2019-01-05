@@ -7,9 +7,8 @@ const {
 } = require('colors');
 
 const { version } = require('../../package.json');
+const { PROJECT_TEMPLATE } = require('../common');
 const utils = require('../utils');
-
-const TEMPLATE_PATH = path.resolve(__dirname, '../../template');
 
 const ALPINE_TEXT = `
 █████╗ ██╗     ██████╗ ██╗███╗   ██╗███████╗
@@ -90,6 +89,7 @@ function projectPrompts(projectName) {
     };
 
     prompt.start();
+    prompt.message = '';
 
     prompt.get(schema, (err, result) => {
       if (err) reject(err);
@@ -125,10 +125,10 @@ module.exports = async ({ projectName }, options, logger) => {
     // -A: all files (include files beginning with ., except for . and ..)
     // -R: recursive
     // -l: list objects representing each file, each with fields containing ls -l output fields. See fs.Stats
-    .ls('-ARl', TEMPLATE_PATH)
+    .ls('-ARl', PROJECT_TEMPLATE)
     .map(({ name }) => ({
       name,
-      srcPath: path.resolve(TEMPLATE_PATH, name),
+      srcPath: path.resolve(PROJECT_TEMPLATE, name),
       dstPath: path.resolve(dstFolderPath, name),
     }))
     // ignore non-files
