@@ -1,5 +1,5 @@
 const v8n = require('v8n');
-const { META } = require('./common');
+const { META } = require('../common/constants');
 
 const AlpineMethod = (methodOptions) => {
   const {

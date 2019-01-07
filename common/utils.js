@@ -1,7 +1,7 @@
 const dot = require('dot');
 const fs = require('fs');
 const path = require('path');
-const { PROJECT_TEMPLATE, CONF_FILENAME } = require('./common');
+const { PROJECT_TEMPLATE, CONF_FILENAME } = require('./constants');
 
 // disable stripping whitespaces
 dot.templateSettings.strip = false;

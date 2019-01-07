@@ -9,8 +9,12 @@
   "scripts": {
     "test": "mocha ./.alpine/test.js"
   },
+  "bin": {
+    "{{=it.project.name}}": "./.alpine/cli.js"
+  },
   "dependencies": {
     "alpine": "^0.0.1",
+    "caporal": "^1.1.0",
     "require-all": "^3.0.0",
     "v8n": "^1.2.3"
   },

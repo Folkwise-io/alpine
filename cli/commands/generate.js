@@ -1,5 +1,5 @@
 const { red } = require('colors');
-const { isRoot } = require('../utils');
+const { isRoot } = require('../../common/utils');
 
 const methodGeneration = require('./method.generate');
 

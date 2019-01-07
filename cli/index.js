@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const prog = require('caporal');
-
 const { version } = require('../package.json');
 
 const initializeCmd = require('./commands/initialize');

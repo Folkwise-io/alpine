@@ -5,8 +5,8 @@ const {
   bold, green, red, cyan,
 } = require('colors');
 
-const { METHOD_TEMPLATE, TEST_TEMPLATE } = require('../common');
-const { getConfiguration, processTemplate } = require('../utils');
+const { METHOD_TEMPLATE, TEST_TEMPLATE } = require('../../common/constants');
+const { getConfiguration, processTemplate } = require('../../common/utils');
 
 function methodPrompts() {
   return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 const { equal } = require('chai').assert;
-const utils = require('../cli/utils');
+const utils = require('../common/utils');
 
 describe('utils', () => {
   it('can template', () => {

@@ -1,7 +1,7 @@
+const { META } = require('../common/constants');
 const Alpine = require('./alpine');
-const AlpineMethod = require('./method');
 
 module.exports = {
   Alpine,
-  AlpineMethod,
+  META,
 };

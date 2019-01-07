@@ -1,15 +1,21 @@
 const requireAll = require('require-all');
-const { META } = require('./common');
+const AlpineMethod = require('./method');
 
-const Alpine = (libraryOptions) => {
-  const defaultOptions = {
-    methodsPath: '../methods',
-    testsPath: '../tests',
-  };
-  const opts = Object.assign({}, defaultOptions, libraryOptions);
+const { isRoot, getConfiguration } = require('../common/utils');
+
+const Alpine = () => {
+  const opts = {};
+
+  // Get project configuration
+  if (!isRoot()) {
+    throw new Error('Invalid root.');
+  }
+
+  // Get project configuration
+  Object.assign(opts, getConfiguration());
 
   // Require all the methods
-  const alpineMethods = requireAll({
+  const methodMetas = requireAll({
     dirname: opts.methodsPath,
     filter: /(.+method)\.js$/,
     recursive: true,
@@ -17,10 +23,8 @@ const Alpine = (libraryOptions) => {
 
   // Build the library
   const library = {};
-  Object.values(alpineMethods).forEach((alpineMethod) => {
-    const alpineMethodMeta = alpineMethod(META); // Get the method's meta data
-    const { name } = alpineMethodMeta;
-    library[name] = alpineMethod;
+  Object.values(methodMetas).forEach((methodMeta) => {
+    library[methodMeta.name] = AlpineMethod(methodMeta);
   });
 
   return library;

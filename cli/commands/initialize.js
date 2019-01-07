@@ -7,8 +7,8 @@ const {
 } = require('colors');
 
 const { version } = require('../../package.json');
-const { PROJECT_TEMPLATE } = require('../common');
-const utils = require('../utils');
+const { PROJECT_TEMPLATE } = require('../../common/constants');
+const utils = require('../../common/utils');
 
 const ALPINE_TEXT = `
 █████╗ ██╗     ██████╗ ██╗███╗   ██╗███████╗
