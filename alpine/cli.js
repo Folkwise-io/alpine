@@ -57,7 +57,7 @@ const Cli = (executedCommand = process.argv[2]) => {
     const method = cliCommands[key];
     const { cli } = method(META);
 
-    const command = cli.command || key.toLowerCase();
+    const command = cli && cli.command ? cli.command : key.toLowerCase();
     if (command === executedCommand) {
       return true;
     }

@@ -1,9 +1,33 @@
-const v8n = require('v8n');
 const { META } = require('../common/constants');
+
+const testParameter = parameter => (arg) => {
+  const { type } = parameter;
+  let { validate: validators } = parameter;
+
+  // Check the type
+  if (type && typeof arg !== type) {
+    throw new Error(`TypeError: [${parameter.name || '<Unknown Method>'}] expected type ${type}`);
+  }
+
+  // Test the value against validators
+  if (validators != null) {
+    if (typeof validators === 'function') {
+      validators = [validators]; // Turn the validator into a list if just a function
+    }
+
+    let targetValidator;
+    while (validators.length > 0) {
+      targetValidator = validators.pop();
+      if (!targetValidator(arg)) {
+        throw new Error(`TypeError: [${parameter.name || '<Unknown Method>'}] failed validation`);
+      }
+    }
+  }
+};
 
 const AlpineMethod = (methodOptions) => {
   const {
-    name, parameters, returnValidation, value,
+    name, parameters, returns, value,
   } = methodOptions;
 
   if (!name) {
@@ -36,12 +60,7 @@ const AlpineMethod = (methodOptions) => {
       }
 
       params.forEach((parameter, i) => {
-        if (parameter.validate != null) {
-          const validator = parameter.validate(v8n());
-          if (!validator.test(args[i])) {
-            throw new Error(`Invalid parameter: [${parameter.name || '<Unknown Method>'}]`);
-          }
-        }
+        testParameter(parameter)(args[i]);
       });
     }
 
@@ -49,11 +68,8 @@ const AlpineMethod = (methodOptions) => {
     const result = value(...args);
 
     // Validate the result of the function
-    if (returnValidation) {
-      const validator = returnValidation(v8n());
-      if (!validator.test(result)) {
-        throw new Error('Invalid return type');
-      }
+    if (returns) {
+      testParameter(returns)(result);
     }
 
     return result;
