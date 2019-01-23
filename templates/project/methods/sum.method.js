@@ -1,6 +1,7 @@
 // Method definition
 function sum(x, y) {
   console.log(x + y);
+  return x + y;
 }
 
 // Alpine method definition and export
@@ -18,6 +19,5 @@ module.exports = {
       validate: val => val.number().between(0, 100), // Additional validation using v8n
     },
   ],
-  cli: true,
   value: sum,
 };

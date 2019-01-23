@@ -1,8 +1,9 @@
 const assert = require('assert');
+const library = require('../');
 
 // sum() unit testing
-module.exports = (methods) => {
+describe('#sum()', () => {
   it('should return 3 with parameters 1 and 2', () => {
-    assert.equal(methods.sum(1, 2), 3);
+    assert.equal(library.sum(1, 2), 3);
   });
-};
+});

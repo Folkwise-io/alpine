@@ -1,7 +1,7 @@
-const { META } = require('../common/constants');
 const Alpine = require('./alpine');
+const Cli = require('./cli');
 
 module.exports = {
   Alpine,
-  META,
+  Cli
 };

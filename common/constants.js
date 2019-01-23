@@ -6,6 +6,8 @@ const METHOD_TEMPLATE = path.resolve(TEMPLATES_PATH, 'method.js');
 const TEST_TEMPLATE = path.resolve(TEMPLATES_PATH, 'test.js');
 
 const CONF_FILENAME = 'alpine.conf.js';
+const PACKAGE_JSON = 'package.json';
+const LIBRARY_ROOT = 'index.js';
 
 const META = Symbol('META');
 
@@ -15,5 +17,7 @@ module.exports = {
   METHOD_TEMPLATE,
   TEST_TEMPLATE,
   CONF_FILENAME,
+  PACKAGE_JSON,
+  LIBRARY_ROOT,
   META,
 };
