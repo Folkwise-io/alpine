@@ -1,18 +1,13 @@
 const requireAll = require('require-all');
 const AlpineMethod = require('./method');
 
-const { isRoot, getConfiguration } = require('../common/utils');
+const { getConfiguration } = require('../common/utils');
 
-const Alpine = () => {
+const Alpine = (config = getConfiguration()) => {
   const opts = {};
 
   // Get project configuration
-  if (!isRoot()) {
-    throw new Error('Invalid root.');
-  }
-
-  // Get project configuration
-  Object.assign(opts, getConfiguration());
+  Object.assign(opts, config);
 
   // Require all the methods
   const methodMetas = requireAll({

@@ -1,7 +1,7 @@
 const prog = require('caporal');
 const { META } = require('../common/constants');
 const {
-  cast, isRoot, getPackage, getLibrary,
+  cast, getPackage, getLibrary,
 } = require('../common/utils');
 
 const configure = cli => (method = null) => {
@@ -25,10 +25,6 @@ const configure = cli => (method = null) => {
 };
 
 const Cli = (executedCommand = process.argv[2]) => {
-  if (!isRoot()) {
-    throw new Error('Invalid root.');
-  }
-
   // Get project package.json
   const projectPackageJson = getPackage();
 
