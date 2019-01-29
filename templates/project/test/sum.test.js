@@ -1,5 +1,8 @@
 const assert = require('assert');
-const library = require('../');
+const pkg = require('../package.json');
+
+// Require the built module
+const library = require(`../${pkg.main}`);
 
 // sum() unit testing
 describe('#sum()', () => {
