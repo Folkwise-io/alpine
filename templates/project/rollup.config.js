@@ -26,18 +26,26 @@ const baseConfig = {
 
 const cjs = Object.assign({}, baseConfig, {
   output: {
-    name: 'Task',
-    file: pkg.browser,
+    name: pkg.name,
+    file: pkg.main,
     format: 'cjs',
   },
 });
 
 const esm = Object.assign({}, baseConfig, {
   output: {
-    name: 'Task',
+    name: pkg.name,
     file: pkg.module,
     format: 'es',
   },
 });
 
-export default [cjs, esm];
+const umd = Object.assign({}, baseConfig, {
+  output: {
+    name: pkg.name,
+    file: pkg.browser,
+    format: 'umd',
+  },
+});
+
+export default [cjs, esm, umd];
