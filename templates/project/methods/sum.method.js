@@ -1,4 +1,4 @@
-const v8n = require('v8n');
+import v8n from 'v8n';
 
 // Method definition
 function sum(x, y) {
@@ -7,7 +7,7 @@ function sum(x, y) {
 }
 
 // Alpine method definition and export
-module.exports = {
+export default {
   name: 'sum',
   parameters: [
     {
@@ -18,13 +18,10 @@ module.exports = {
     {
       name: 'y',
       type: 'number', // Type validation
-      validate: [
-        value => v8n()
-          .number()
-          .between(0, 100)
-          .test(value), // Additional validation using v8n
-        value => value % 2, // Another validation
-      ],
+      validate: value => v8n()
+        .number()
+        .between(0, 100)
+        .test(value), // Additional validation using v8n
     },
   ],
   returns: {

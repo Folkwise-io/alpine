@@ -1,24 +1,43 @@
+const babel = require('rollup-plugin-babel');
+const json = require('rollup-plugin-json');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
-const json = require('rollup-plugin-json');
+const alpine = require('rollup-plugin-alpine');
 const fs = require('fs');
 
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
-const external = Object.keys(pkg.dependencies || {});
 
-module.exports = [
-  {
-    input: './index.js',
-    output: {
-      name: 'Task',
-      file: pkg.browser,
-      format: 'umd',
-    },
-    plugins: [resolve(), commonjs({ include: 'node_modules/**' }), json()],
+const baseConfig = {
+  input: 'index.js',
+  plugins: [
+    alpine(),
+    resolve({
+      preferBuiltins: false,
+    }),
+    commonjs({
+      include: 'node_modules/**',
+    }),
+    json(),
+    babel({
+      exclude: 'node_modules/**',
+    }),
+  ],
+};
+
+const cjs = Object.assign({}, baseConfig, {
+  output: {
+    name: 'Task',
+    file: pkg.browser,
+    format: 'cjs',
   },
-  {
-    input: './index.js',
-    external,
-    output: [{ file: pkg.main, format: 'cjs' }, { file: pkg.module, format: 'es' }],
+});
+
+const esm = Object.assign({}, baseConfig, {
+  output: {
+    name: 'Task',
+    file: pkg.module,
+    format: 'es',
   },
-];
+});
+
+export default [cjs, esm];
