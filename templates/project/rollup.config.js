@@ -12,6 +12,9 @@ const baseConfig = {
   plugins: [
     alpine(),
     resolve({
+      main: true,
+      module: true,
+      browser: true,
       preferBuiltins: false,
     }),
     commonjs({
