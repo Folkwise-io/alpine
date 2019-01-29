@@ -11,7 +11,13 @@ dot.templateSettings.strip = false;
 
 // Will get the root of the running script
 function getRoot() {
-  return path.dirname(require.main.filename);
+  let currentScript = require.main.filename;
+  if (currentScript.indexOf('node_modules') >= 0) {
+    [currentScript] = currentScript.split('/node_modules');
+  } else {
+    currentScript = path.dirname(currentScript);
+  }
+  return currentScript;
 }
 
 // Will get the root of the current project directory
@@ -31,7 +37,27 @@ async function getProjectRoot() {
   return path.dirname(projectRoot);
 }
 
+// Synchronous version of `getProjectRoot`
+function getProjectRootSync() {
+  const projectRoot = pkgUp.sync();
+  if (!projectRoot) {
+    throw new Error('Could not find the project root.');
+  }
+
+  const projectPackageJson = require(projectRoot);
+  const projectDependencies = Object.keys(projectPackageJson.dependencies || {});
+  const alpineDependency = projectDependencies.find(dependency => dependency === 'alpine');
+  if (!alpineDependency) {
+    throw new Error('Could not find an Alpine project root.');
+  }
+
+  return path.dirname(projectRoot);
+}
+
 const utils = {
+  getRoot,
+  getProjectRoot,
+  getProjectRootSync,
   readFileAsString: (file, dirname = PROJECT_TEMPLATE) => {
     const filePath = path.resolve(dirname, file);
     return fs.readFileSync(filePath).toString('utf8');
@@ -42,8 +68,6 @@ const utils = {
     const dstContent = tempFn(it);
     return dstContent;
   },
-  getRoot,
-  getProjectRoot,
   getLibrary: (localPath = getRoot()) => {
     if (fs.existsSync(`${localPath}/${LIBRARY_ROOT}`)) {
       return require(`${localPath}/${LIBRARY_ROOT}`);

@@ -10,16 +10,22 @@ const Alpine = (config = getConfiguration()) => {
   Object.assign(opts, config);
 
   // Require all the methods
-  const methodMetas = requireAll({
-    dirname: opts.methodsPath,
-    filter: /(.+method)\.js$/,
-    recursive: true,
-  });
+  if (!opts.methods) {
+    const methodDefinitions = requireAll({
+      dirname: opts.methodsPath,
+      filter: /(.+method)\.js$/,
+      recursive: true,
+    });
+
+    Object.assign(opts, {
+      methods: methodDefinitions,
+    });
+  }
 
   // Build the library
   const library = {};
-  Object.values(methodMetas).forEach((methodMeta) => {
-    library[methodMeta.name] = AlpineMethod(methodMeta);
+  Object.values(opts.methods).forEach((methodDefinition) => {
+    library[methodDefinition.name] = AlpineMethod(methodDefinition);
   });
 
   return library;
