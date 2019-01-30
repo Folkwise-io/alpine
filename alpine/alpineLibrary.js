@@ -1,4 +1,5 @@
 const AlpineMethod = require('./method');
+const { DUPLICATE } = require('../config');
 
 const AlpineLibrary = (config = {}) => {
   const opts = {};
@@ -10,7 +11,7 @@ const AlpineLibrary = (config = {}) => {
   const library = {};
   Object.values(opts.methods).forEach((methodDefinition) => {
     if (library[methodDefinition.name]) {
-      throw new Error(`Duplicate: ${methodDefinition.name} has been defined more than once.`);
+      throw new Error(DUPLICATE(methodDefinition.name));
     }
 
     library[methodDefinition.name] = AlpineMethod(methodDefinition);

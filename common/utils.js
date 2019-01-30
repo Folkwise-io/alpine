@@ -2,9 +2,14 @@ const dot = require('dot');
 const fs = require('fs');
 const path = require('path');
 const pkgUp = require('pkg-up');
+const { messages } = require('../config');
 const {
   PROJECT_TEMPLATE, CONF_FILENAME, PACKAGE_JSON, LIBRARY_ROOT,
 } = require('./constants');
+
+const {
+  MISSING_PROJECT_ROOT, MISSING_ALPINE_ROOT, INVALID_TYPE, UNSUPPORTED_TYPE,
+} = messages;
 
 // disable stripping whitespaces
 dot.templateSettings.strip = false;
@@ -24,14 +29,14 @@ function getRoot() {
 async function getProjectRoot() {
   const projectRoot = await pkgUp();
   if (!projectRoot) {
-    throw new Error('Could not find the project root.');
+    throw new Error(MISSING_PROJECT_ROOT());
   }
 
   const projectPackageJson = require(projectRoot);
   const projectDependencies = Object.keys(projectPackageJson.dependencies || {});
   const alpineDependency = projectDependencies.find(dependency => dependency === 'alpine');
   if (!alpineDependency) {
-    throw new Error('Could not find an Alpine project root.');
+    throw new Error(MISSING_ALPINE_ROOT());
   }
 
   return path.dirname(projectRoot);
@@ -41,14 +46,14 @@ async function getProjectRoot() {
 function getProjectRootSync() {
   const projectRoot = pkgUp.sync();
   if (!projectRoot) {
-    throw new Error('Could not find the project root.');
+    throw new Error(MISSING_PROJECT_ROOT());
   }
 
   const projectPackageJson = require(projectRoot);
   const projectDependencies = Object.keys(projectPackageJson.dependencies || {});
   const alpineDependency = projectDependencies.find(dependency => dependency === 'alpine');
   if (!alpineDependency) {
-    throw new Error('Could not find an Alpine project root.');
+    throw new Error(MISSING_ALPINE_ROOT());
   }
 
   return path.dirname(projectRoot);
@@ -94,10 +99,13 @@ const utils = {
         return `${val}`;
       case 'boolean':
         return val.toLowerCase() === 'true';
+      case 'object':
+        throw new TypeError(UNSUPPORTED_TYPE(type));
       default:
-        return val;
+        throw new TypeError(INVALID_TYPE(type));
     }
   },
+  env: (prod, dev) => (process.env.NODE_ENV === 'production' ? prod : dev),
 };
 
 module.exports = utils;
