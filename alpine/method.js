@@ -6,7 +6,7 @@ const testParameter = parameter => (arg) => {
 
   // Check the type
   if (type && typeof arg !== type) {
-    throw new Error(`TypeError: [${parameter.name || '<Unknown Method>'}] expected type ${type}`);
+    throw new TypeError(`[${parameter.name || '<Unknown Method>'}] expected type ${type}`);
   }
 
   // Test the value against validators
@@ -19,7 +19,7 @@ const testParameter = parameter => (arg) => {
     while (validators.length > 0) {
       targetValidator = validators.pop();
       if (!targetValidator(arg)) {
-        throw new Error(`TypeError: [${parameter.name || '<Unknown Method>'}] failed validation`);
+        throw new TypeError(`[${parameter.name || '<Unknown Method>'}] failed validation`);
       }
     }
   }
@@ -31,11 +31,11 @@ const AlpineMethod = (methodOptions) => {
   } = methodOptions;
 
   if (!name) {
-    throw new Error('Missing method name');
+    throw new TypeError('Missing method name');
   }
 
   if (!value) {
-    throw new Error('Missing method value');
+    throw new TypeError('Missing method value');
   }
 
   return (...args) => {
@@ -46,17 +46,18 @@ const AlpineMethod = (methodOptions) => {
 
     // Validate the parameters that were passed
     if (parameters) {
-      let params = parameters;
-      if (!Array.isArray(params)) {
-        params = [params];
-      }
+      const params = Array.isArray(parameters) ? parameters : [parameters];
 
       if (args.length > params.length) {
-        throw new Error('Unexpected parameter');
+        throw new TypeError(
+          `Expected ${params.length} parameter(s), instead received ${args.length}`,
+        );
       }
 
       if (args.length < params.length) {
-        throw new Error('Missing parameters');
+        throw new TypeError(
+          `Expected ${params.length} parameter(s), instead received ${args.length}`,
+        );
       }
 
       params.forEach((parameter, i) => {

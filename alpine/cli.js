@@ -1,10 +1,8 @@
 const prog = require('caporal');
 const { META } = require('../common/constants');
-const {
-  cast, getPackage, getLibrary,
-} = require('../common/utils');
+const { cast, getPackage, getLibrary } = require('../common/utils');
 
-const configure = cli => (method = null) => {
+const configure = cli => (method) => {
   const { name, description, parameters } = method(META);
 
   // Construct the command using the name and description
@@ -38,14 +36,14 @@ const Cli = (executedCommand = process.argv[2]) => {
     const method = projectLibrary[key];
     const { cli } = method(META);
 
-    if (cli !== false) {
-      return {
-        ...allCommands,
-        [key]: method,
-      };
+    if (cli === false) {
+      return allCommands;
     }
 
-    return allCommands;
+    return {
+      ...allCommands,
+      [key]: method,
+    };
   }, {});
 
   // Seek CLI methods in library
@@ -53,12 +51,10 @@ const Cli = (executedCommand = process.argv[2]) => {
     const method = cliCommands[key];
     const { cli } = method(META);
 
-    const command = cli && cli.command ? cli.command : key.toLowerCase();
-    if (command === executedCommand) {
-      return true;
-    }
+    const command = (cli && cli.command) || key.toLowerCase();
 
-    return false;
+    // Returns true if the executed command is found
+    return command === executedCommand;
   });
 
   // Configure the CLI with the found or all commands

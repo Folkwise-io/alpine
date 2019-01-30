@@ -1,18 +1,22 @@
 const AlpineMethod = require('./method');
 
-const AlpineBuild = (config = {}) => {
+const AlpineLibrary = (config = {}) => {
   const opts = {};
 
-  // Get project configuration
+  // Assign project configuration
   Object.assign(opts, config);
 
   // Build the library
   const library = {};
   Object.values(opts.methods).forEach((methodDefinition) => {
+    if (library[methodDefinition.name]) {
+      throw new Error(`Duplicate: ${methodDefinition.name} has been defined more than once.`);
+    }
+
     library[methodDefinition.name] = AlpineMethod(methodDefinition);
   });
 
   return library;
 };
 
-module.exports = AlpineBuild;
+module.exports = AlpineLibrary;

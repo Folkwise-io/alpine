@@ -1,5 +1,5 @@
 const requireAll = require('require-all');
-const AlpineMethod = require('./method');
+const AlpineLibrary = require('./alpineLibrary');
 
 const { getConfiguration } = require('../common/utils');
 
@@ -13,7 +13,7 @@ const Alpine = (config = getConfiguration()) => {
   if (!opts.methods) {
     const methodDefinitions = requireAll({
       dirname: opts.methodsPath,
-      filter: /(.+method)\.js$/,
+      filter: /(\w+)\.js$/,
       recursive: true,
     });
 
@@ -22,13 +22,7 @@ const Alpine = (config = getConfiguration()) => {
     });
   }
 
-  // Build the library
-  const library = {};
-  Object.values(opts.methods).forEach((methodDefinition) => {
-    library[methodDefinition.name] = AlpineMethod(methodDefinition);
-  });
-
-  return library;
+  return AlpineLibrary(opts);
 };
 
 module.exports = Alpine;
