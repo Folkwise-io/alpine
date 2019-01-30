@@ -1,4 +1,4 @@
-const TEMPLATES_PATH = `${__dirname}../templates`;
+const TEMPLATES_PATH = `${__dirname}/../templates`;
 const PROJECT_TEMPLATE = `${TEMPLATES_PATH}/project`;
 const METHOD_TEMPLATE = `${TEMPLATES_PATH}/method.js`;
 const TEST_TEMPLATE = `${TEMPLATES_PATH}/test.js`;

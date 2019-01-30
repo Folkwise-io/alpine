@@ -1,4 +1,7 @@
 const { META } = require('../common/constants');
+const { messages } = require('../config');
+
+const { INVALID_PARAM_TYPE, INVALID_PARAMETERS, VALIDATION_FAILURE } = messages;
 
 const testParameter = parameter => (arg) => {
   const { type } = parameter;
@@ -6,7 +9,7 @@ const testParameter = parameter => (arg) => {
 
   // Check the type
   if (type && typeof arg !== type) {
-    throw new TypeError(`[${parameter.name || '<Unknown Method>'}] expected type ${type}`);
+    throw new TypeError(INVALID_PARAM_TYPE(type, typeof arg));
   }
 
   // Test the value against validators
@@ -19,7 +22,7 @@ const testParameter = parameter => (arg) => {
     while (validators.length > 0) {
       targetValidator = validators.pop();
       if (!targetValidator(arg)) {
-        throw new TypeError(`[${parameter.name || '<Unknown Method>'}] failed validation`);
+        throw new TypeError(VALIDATION_FAILURE(parameter.name || 'Unknown method'));
       }
     }
   }
@@ -48,16 +51,8 @@ const AlpineMethod = (methodOptions) => {
     if (parameters) {
       const params = Array.isArray(parameters) ? parameters : [parameters];
 
-      if (args.length > params.length) {
-        throw new TypeError(
-          `Expected ${params.length} parameter(s), instead received ${args.length}`,
-        );
-      }
-
-      if (args.length < params.length) {
-        throw new TypeError(
-          `Expected ${params.length} parameter(s), instead received ${args.length}`,
-        );
+      if (args.length > params.length || args.length < params.length) {
+        throw new TypeError(INVALID_PARAMETERS(params.length, args.length));
       }
 
       params.forEach((parameter, i) => {
