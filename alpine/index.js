@@ -1,7 +1,7 @@
 const Alpine = require('./alpine');
-const AlpineMethod = require('./method');
+const Cli = require('./cli');
 
 module.exports = {
   Alpine,
-  AlpineMethod,
+  Cli,
 };

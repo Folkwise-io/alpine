@@ -5,8 +5,8 @@ const {
   bold, green, red, cyan,
 } = require('colors');
 
-const { METHOD_TEMPLATE, TEST_TEMPLATE } = require('../common');
-const { getConfiguration, processTemplate } = require('../utils');
+const { METHOD_TEMPLATE, TEST_TEMPLATE } = require('../../common/constants');
+const { getProjectRoot, getConfiguration, processTemplate } = require('../../common/utils');
 
 function methodPrompts() {
   return new Promise((resolve, reject) => {
@@ -34,18 +34,26 @@ function methodPrompts() {
 }
 
 module.exports = async (args, options, logger) => {
-  const localPath = process.cwd();
-  const { methodsPath, testsPath } = getConfiguration();
+  let projectDir;
+  try {
+    projectDir = await getProjectRoot(); // Attempt to find the root of the Alpine project
+  } catch (e) {
+    logger.error(red(e.message));
+    return;
+  }
+
+  // Get configuration
+  const { methodsPath, testsPath } = getConfiguration(projectDir);
 
   // check if the configured methods path exists
-  const localMethodsPath = path.resolve(localPath, methodsPath);
+  const localMethodsPath = path.resolve(projectDir, methodsPath);
   if (!fs.pathExistsSync(localMethodsPath)) {
     logger.error(red('Methods path is missing.'));
     process.exit(1);
   }
 
   // check if the configured tests path exists
-  const localTestsPath = path.resolve(localPath, testsPath);
+  const localTestsPath = path.resolve(projectDir, testsPath);
   if (!fs.pathExistsSync(localTestsPath)) {
     logger.error(red('Tests path is missing.'));
     process.exit(1);

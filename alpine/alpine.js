@@ -1,29 +1,28 @@
 const requireAll = require('require-all');
-const { META } = require('./common');
+const AlpineLibrary = require('./alpineLibrary');
 
-const Alpine = (libraryOptions) => {
-  const defaultOptions = {
-    methodsPath: '../methods',
-    testsPath: '../tests',
-  };
-  const opts = Object.assign({}, defaultOptions, libraryOptions);
+const { getConfiguration } = require('../common/utils');
+
+const Alpine = (config = getConfiguration()) => {
+  const opts = {};
+
+  // Get project configuration
+  Object.assign(opts, config);
 
   // Require all the methods
-  const alpineMethods = requireAll({
-    dirname: opts.methodsPath,
-    filter: /(.+method)\.js$/,
-    recursive: true,
-  });
+  if (!opts.methods) {
+    const methodDefinitions = requireAll({
+      dirname: opts.methodsPath,
+      filter: /(\w+)\.js$/,
+      recursive: true,
+    });
 
-  // Build the library
-  const library = {};
-  Object.values(alpineMethods).forEach((alpineMethod) => {
-    const alpineMethodMeta = alpineMethod(META); // Get the method's meta data
-    const { name } = alpineMethodMeta;
-    library[name] = alpineMethod;
-  });
+    Object.assign(opts, {
+      methods: methodDefinitions,
+    });
+  }
 
-  return library;
+  return AlpineLibrary(opts);
 };
 
 module.exports = Alpine;

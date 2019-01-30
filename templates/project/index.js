@@ -1,4 +1,5 @@
-const { Alpine } = require('alpine');
-const cfg = require('./alpine.conf');
+import 'babel-register';
 
-module.exports = Alpine(cfg);
+import { Alpine } from 'alpine';
+
+export default Alpine();

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const prog = require('caporal');
-
 const { version } = require('../package.json');
 
 const initializeCmd = require('./commands/initialize');
@@ -12,6 +11,7 @@ prog
   // Create <new> command
   .command('new', 'Create a new Alpine project')
   .argument('<projectName>', 'Name of the project')
+  .option('-y, --default', 'Choose the default for each prompt.')
   .action(initializeCmd)
 
   // Generate <generate> command

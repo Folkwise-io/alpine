@@ -1,17 +1,44 @@
-const v8n = require('v8n');
-const { META } = require('./common');
+const { META } = require('../common/constants');
+const { messages } = require('../config');
+
+const { INVALID_PARAM_TYPE, INVALID_PARAMETERS, VALIDATION_FAILURE } = messages;
+
+const testParameter = parameter => (arg) => {
+  const { type } = parameter;
+  let { validate: validators } = parameter;
+
+  // Check the type
+  if (type && typeof arg !== type) {
+    throw new TypeError(INVALID_PARAM_TYPE(type, typeof arg));
+  }
+
+  // Test the value against validators
+  if (validators != null) {
+    if (typeof validators === 'function') {
+      validators = [validators]; // Turn the validator into a list if just a function
+    }
+
+    let targetValidator;
+    while (validators.length > 0) {
+      targetValidator = validators.pop();
+      if (!targetValidator(arg)) {
+        throw new TypeError(VALIDATION_FAILURE(parameter.name || 'Unknown method'));
+      }
+    }
+  }
+};
 
 const AlpineMethod = (methodOptions) => {
   const {
-    name, parameters, returnValidation, value,
+    name, parameters, returns, value,
   } = methodOptions;
 
   if (!name) {
-    throw new Error('Missing method name');
+    throw new TypeError('Missing method name');
   }
 
   if (!value) {
-    throw new Error('Missing method value');
+    throw new TypeError('Missing method value');
   }
 
   return (...args) => {
@@ -22,26 +49,14 @@ const AlpineMethod = (methodOptions) => {
 
     // Validate the parameters that were passed
     if (parameters) {
-      let params = parameters;
-      if (!Array.isArray(params)) {
-        params = [params];
-      }
+      const params = Array.isArray(parameters) ? parameters : [parameters];
 
-      if (args.length > params.length) {
-        throw new Error('Unexpected parameter');
-      }
-
-      if (args.length < params.length) {
-        throw new Error('Missing parameters');
+      if (args.length > params.length || args.length < params.length) {
+        throw new TypeError(INVALID_PARAMETERS(params.length, args.length));
       }
 
       params.forEach((parameter, i) => {
-        if (parameter.validate != null) {
-          const validator = parameter.validate(v8n());
-          if (!validator.test(args[i])) {
-            throw new Error(`Invalid parameter: [${parameter.name || '<Unknown Method>'}]`);
-          }
-        }
+        testParameter(parameter)(args[i]);
       });
     }
 
@@ -49,11 +64,8 @@ const AlpineMethod = (methodOptions) => {
     const result = value(...args);
 
     // Validate the result of the function
-    if (returnValidation) {
-      const validator = returnValidation(v8n());
-      if (!validator.test(result)) {
-        throw new Error('Invalid return type');
-      }
+    if (returns) {
+      testParameter(returns)(result);
     }
 
     return result;
