@@ -8,7 +8,7 @@ import {
 
 import { version } from '../../package.json';
 import { PROJECT_TEMPLATE } from '../../common/constants';
-import utils from '../../common/utils';
+import * as utils from '../../common/utils';
 
 const ALPINE_TEXT = `
 █████╗ ██╗     ██████╗ ██╗███╗   ██╗███████╗
