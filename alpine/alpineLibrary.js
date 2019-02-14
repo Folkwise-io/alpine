@@ -1,5 +1,7 @@
-const AlpineMethod = require('./method');
-const { DUPLICATE } = require('../config');
+import AlpineMethod from './method';
+import { messages } from '../config';
+
+const { DUPLICATE } = messages;
 
 const AlpineLibrary = (config = {}) => {
   const opts = {};
@@ -20,4 +22,4 @@ const AlpineLibrary = (config = {}) => {
   return library;
 };
 
-module.exports = AlpineLibrary;
+export default AlpineLibrary;

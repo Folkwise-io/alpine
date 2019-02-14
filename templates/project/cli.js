@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-import 'babel-register';
+require('@babel/register')({ cwd: __dirname, ignore: [] });
+require('@babel/polyfill');
 
-import { Cli } from 'alpine';
+const { Cli } = require('alpine');
 
-export default Cli();
+module.exports = Cli();

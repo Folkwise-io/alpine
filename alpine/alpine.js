@@ -1,28 +1,27 @@
-const requireAll = require('require-all');
-const AlpineLibrary = require('./alpineLibrary');
+import AlpineLibrary from './alpineLibrary';
+import { getConfiguration, importDir } from '../common/utils';
 
-const { getConfiguration } = require('../common/utils');
-
-const Alpine = (config = getConfiguration()) => {
+const Alpine = async (config = null) => {
   const opts = {};
+
+  if (!config) {
+    config = await getConfiguration();
+  }
 
   // Get project configuration
   Object.assign(opts, config);
 
   // Require all the methods
   if (!opts.methods) {
-    const methodDefinitions = requireAll({
-      dirname: opts.methodsPath,
-      filter: /(\w+)\.js$/,
-      recursive: true,
-    });
+    const methodDefinitions = await importDir(opts.methodsPath);
+    const safeDefinitions = methodDefinitions.map(def => (def.default ? def.default : def));
 
     Object.assign(opts, {
-      methods: methodDefinitions,
+      methods: safeDefinitions,
     });
   }
 
   return AlpineLibrary(opts);
 };
 
-module.exports = Alpine;
+export default Alpine;

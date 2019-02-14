@@ -9,7 +9,7 @@ const LIBRARY_ROOT = 'index.js';
 
 const META = Symbol('META');
 
-module.exports = {
+export {
   TEMPLATES_PATH,
   PROJECT_TEMPLATE,
   METHOD_TEMPLATE,

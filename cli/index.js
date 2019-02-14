@@ -1,22 +1,5 @@
 #!/usr/bin/env node
-const prog = require('caporal');
-const { version } = require('../package.json');
+require('@babel/register')({ cwd: `${__dirname}/..` });
+require('@babel/polyfill');
 
-const initializeCmd = require('./commands/initialize');
-const generateCmd = require('./commands/generate');
-
-prog
-  .version(version)
-
-  // Create <new> command
-  .command('new', 'Create a new Alpine project')
-  .argument('<projectName>', 'Name of the project')
-  .option('-y, --default', 'Choose the default for each prompt.')
-  .action(initializeCmd)
-
-  // Generate <generate> command
-  .command('generate', 'Generate a new component of the project')
-  .argument('<generationType>', 'Type of component')
-  .action(generateCmd);
-
-prog.parse(process.argv);
+require('./cli');

@@ -21,9 +21,7 @@ const baseConfig = {
       include: 'node_modules/**',
     }),
     json(),
-    babel({
-      exclude: 'node_modules/**',
-    }),
+    babel(),
   ],
 };
 
