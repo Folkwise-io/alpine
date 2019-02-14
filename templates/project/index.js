@@ -1,5 +1,6 @@
-import 'babel-register';
+require('@babel/register')({ ignore: [] });
+require('@babel/polyfill');
 
-import { Alpine } from 'alpine';
+const { Alpine } = require('alpine');
 
-export default Alpine();
+module.exports = Alpine();
