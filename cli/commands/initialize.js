@@ -1,14 +1,14 @@
-const fs = require('fs-extra');
-const path = require('path');
-const shelljs = require('shelljs');
-const prompt = require('prompt');
-const {
+import fs from 'fs-extra';
+import path from 'path';
+import shelljs from 'shelljs';
+import prompt from 'prompt';
+import {
   bold, green, red, cyan,
-} = require('colors');
+} from 'colors';
 
-const { version } = require('../../package.json');
-const { PROJECT_TEMPLATE } = require('../../common/constants');
-const utils = require('../../common/utils');
+import { version } from '../../package.json';
+import { PROJECT_TEMPLATE } from '../../common/constants';
+import utils from '../../common/utils';
 
 const ALPINE_TEXT = `
 █████╗ ██╗     ██████╗ ██╗███╗   ██╗███████╗
@@ -98,7 +98,7 @@ function projectPrompts(projectName) {
   });
 }
 
-module.exports = async ({ projectName }, options, logger) => {
+export default async ({ projectName }, options, logger) => {
   logger.info(`${ALPINE_TEXT}`);
   logger.info(bold(cyan(`Creating project ${projectName}`)));
   const dstFolderPath = path.resolve(process.cwd(), projectName);

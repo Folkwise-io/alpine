@@ -1,5 +1,5 @@
-const { META } = require('../common/constants');
-const { messages } = require('../config');
+import { META } from '../common/constants';
+import { messages } from '../config';
 
 const { INVALID_PARAM_TYPE, INVALID_PARAMETERS, VALIDATION_FAILURE } = messages;
 
@@ -72,4 +72,4 @@ const AlpineMethod = (methodOptions) => {
   };
 };
 
-module.exports = AlpineMethod;
+export default AlpineMethod;

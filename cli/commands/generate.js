@@ -1,8 +1,7 @@
-const { red } = require('colors');
+import { red } from 'colors';
+import methodGeneration from './method.generate';
 
-const methodGeneration = require('./method.generate');
-
-module.exports = async ({ generationType, ...args }, options, logger) => {
+export default async ({ generationType, ...args }, options, logger) => {
   switch (generationType.toLowerCase()) {
     case 'method':
       methodGeneration(args, options, logger);

@@ -1,9 +1,9 @@
-const prog = require('caporal');
-const { META } = require('../common/constants');
-const { messages } = require('../config');
-const {
+import prog from 'caporal';
+import { META } from '../common/constants';
+import { messages } from '../config';
+import {
   cast, getPackage, getLibrary, env,
-} = require('../common/utils');
+} from '../common/utils';
 
 const { MISSING_DESCRIPTION, MISSING_VERSION } = messages;
 
@@ -28,12 +28,12 @@ const configure = cli => (method) => {
   return cli;
 };
 
-const Cli = (executedCommand = process.argv[2]) => {
+const Cli = async (executedCommand = process.argv[2]) => {
   // Get project package.json
-  const projectPackageJson = getPackage();
+  const projectPackageJson = await getPackage();
 
   // Get project library
-  const projectLibrary = getLibrary();
+  const projectLibrary = await getLibrary();
 
   // Initialize the CLI
   let cmds = prog.version(projectPackageJson.version || env('0.0.1', MISSING_VERSION()));
@@ -76,4 +76,4 @@ const Cli = (executedCommand = process.argv[2]) => {
   prog.parse(process.argv);
 };
 
-module.exports = Cli;
+export default Cli;

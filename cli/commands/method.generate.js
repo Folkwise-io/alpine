@@ -1,12 +1,12 @@
-const fs = require('fs-extra');
-const path = require('path');
-const prompt = require('prompt');
-const {
+import fs from 'fs-extra';
+import path from 'path';
+import prompt from 'prompt';
+import {
   bold, green, red, cyan,
-} = require('colors');
+} from 'colors';
 
-const { METHOD_TEMPLATE, TEST_TEMPLATE } = require('../../common/constants');
-const { getProjectRoot, getConfiguration, processTemplate } = require('../../common/utils');
+import { METHOD_TEMPLATE, TEST_TEMPLATE } from '../../common/constants';
+import { getProjectRoot, getConfiguration, processTemplate } from '../../common/utils';
 
 function methodPrompts() {
   return new Promise((resolve, reject) => {
@@ -33,7 +33,7 @@ function methodPrompts() {
   });
 }
 
-module.exports = async (args, options, logger) => {
+export default async (args, options, logger) => {
   let projectDir;
   try {
     projectDir = await getProjectRoot(); // Attempt to find the root of the Alpine project
@@ -43,7 +43,7 @@ module.exports = async (args, options, logger) => {
   }
 
   // Get configuration
-  const { methodsPath, testsPath } = getConfiguration(projectDir);
+  const { methodsPath, testsPath } = await getConfiguration(projectDir);
 
   // check if the configured methods path exists
   const localMethodsPath = path.resolve(projectDir, methodsPath);
