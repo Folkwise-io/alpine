@@ -1,8 +1,8 @@
+const { AlpineRollupPlugin } = require('alpine');
 const babel = require('rollup-plugin-babel');
 const json = require('rollup-plugin-json');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
-const alpine = require('rollup-plugin-alpine');
 const fs = require('fs');
 
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
@@ -10,7 +10,7 @@ const pkg = JSON.parse(fs.readFileSync('./package.json'));
 const baseConfig = {
   input: 'index.js',
   plugins: [
-    alpine(),
+    AlpineRollupPlugin(),
     resolve({
       main: true,
       module: true,
