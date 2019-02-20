@@ -1,4 +1,4 @@
-require('@babel/register')({ cwd: __dirname, ignore: [] });
+require('@babel/register')({ cwd: __dirname });
 require('@babel/polyfill');
 
 const { Alpine } = require('alpine');
