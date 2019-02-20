@@ -23,7 +23,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "@babel/register": "^7.0.0",
-    "alpine": "^0.0.1",
+    {{? !it.options.development }}"alpine": "^0.0.1",{{?}}
     "v8n": "^1.2.3"
   },
   "devDependencies": {
@@ -37,7 +37,6 @@
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "rollup": "^1.0.2",
-    "rollup-plugin-alpine": "^0.0.1",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",

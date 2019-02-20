@@ -11,6 +11,7 @@ prog
   .command('new', 'Create a new Alpine project')
   .argument('<projectName>', 'Name of the project')
   .option('-y, --default', 'Choose the default for each prompt.')
+  .option('--dev', 'Development mode')
   .action(initializeCmd)
 
   // Generate <generate> command

@@ -98,7 +98,7 @@ function projectPrompts(projectName) {
   });
 }
 
-export default async ({ projectName }, options, logger) => {
+export default async ({ projectName }, { dev }, logger) => {
   logger.info(`${ALPINE_TEXT}`);
   logger.info(bold(cyan(`Creating project ${projectName}`)));
   const dstFolderPath = path.resolve(process.cwd(), projectName);
@@ -110,7 +110,11 @@ export default async ({ projectName }, options, logger) => {
   }
 
   // DoT.js templating variables
-  const it = {};
+  const it = {
+    options: {
+      development: dev,
+    },
+  };
 
   try {
     it.project = await projectPrompts(projectName);
