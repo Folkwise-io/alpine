@@ -32,14 +32,12 @@ export async function getProjectRoot() {
     throw new Error(MISSING_PROJECT_ROOT());
   }
 
-  const projectPackageJson = require(projectRoot);
-  const projectDependencies = Object.keys(projectPackageJson.dependencies || {});
-  const alpineDependency = projectDependencies.find(dependency => dependency === 'alpine');
-  if (!alpineDependency) {
+  const projectRootDir = path.dirname(projectRoot);
+  if (!fs.existsSync(path.resolve(projectRootDir, CONF_FILENAME))) {
     throw new Error(MISSING_ALPINE_ROOT());
   }
 
-  return path.dirname(projectRoot);
+  return projectRootDir;
 }
 
 // Synchronous version of `getProjectRoot`
@@ -49,14 +47,12 @@ export function getProjectRootSync() {
     throw new Error(MISSING_PROJECT_ROOT());
   }
 
-  const projectPackageJson = require(projectRoot);
-  const projectDependencies = Object.keys(projectPackageJson.dependencies || {});
-  const alpineDependency = projectDependencies.find(dependency => dependency === 'alpine');
-  if (!alpineDependency) {
+  const projectRootDir = path.dirname(projectRoot);
+  if (!fs.existsSync(path.resolve(projectRootDir, CONF_FILENAME))) {
     throw new Error(MISSING_ALPINE_ROOT());
   }
 
-  return path.dirname(projectRoot);
+  return projectRootDir;
 }
 
 export function importDir(path) {
