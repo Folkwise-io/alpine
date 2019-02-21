@@ -8,7 +8,7 @@ import {
 } from './constants';
 
 const {
-  MISSING_PROJECT_ROOT, MISSING_ALPINE_ROOT, INVALID_TYPE, UNSUPPORTED_TYPE,
+  MISSING_PROJECT_ROOT, MISSING_ALPINE_ROOT, INVALID_PARAM_TYPE, UNSUPPORTED_TYPE,
 } = messages;
 
 // disable stripping whitespaces
@@ -118,15 +118,19 @@ export async function getConfiguration(localPath = getRoot()) {
 export function cast(val, type) {
   switch (type.toLowerCase()) {
     case 'number':
-      return Number.parseFloat(val);
+      const float = Number.parseFloat(val);
+      if (isNaN(float)) {
+        throw new TypeError(INVALID_PARAM_TYPE(type, val));
+      }
+      return float;
     case 'string':
       return `${val}`;
     case 'boolean':
-      return val.toLowerCase() === 'true';
+      return val.toLowerCase() === 'true' || Number.parseFloat(val) === 1;
     case 'object':
       throw new TypeError(UNSUPPORTED_TYPE(type));
     default:
-      throw new TypeError(INVALID_TYPE(type));
+      throw new TypeError(INVALID_PARAM_TYPE(type, val));
   }
 }
 
