@@ -1,5 +1,5 @@
 {
-  "name": "{{=it.project.name}}",
+  "name": "{{=it.project.safeName}}",
   "version": "0.0.1",
   "description": "{{=it.project.description}}",
   "main": "dist/{{=it.project.name}}.cjs.js",
@@ -7,7 +7,7 @@
   "browser": "dist/{{=it.project.name}}.umd.js",
   "author": "{{=it.project.author}}",
   "license": "{{=it.project.license}}",
-  "private": "{{=it.project.private}}",
+  "private": {{=it.project.private}},
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -18,7 +18,7 @@
     "dist"
   ],
   "bin": {
-    "{{=it.project.name}}": "./cli.js"
+    "{{=it.project.safeName}}": "./cli.js"
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
