@@ -54,7 +54,7 @@ module.exports = () => {
   };
 
   // Construct the index file
-  const indexContent = processTemplate('template.js', it, __dirname);
+  const indexContent = processTemplate('template.dot.js', it, __dirname);
 
   return {
     name: 'alpine',

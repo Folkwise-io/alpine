@@ -1,4 +1,4 @@
-import AlpineLibrary from './node_modules/alpine/alpine/alpineLibrary';
+import AlpineLibrary from './node_modules/alpine/src/alpine/alpineLibrary';
 
 {{~it.project.imports :value}}
 {{=value}}
