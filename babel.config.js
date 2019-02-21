@@ -5,4 +5,7 @@ module.exports = {
       noInterop: true,
     }],
   ],
+  ignore: [
+    '**/*.dot.js',
+  ],
 };
