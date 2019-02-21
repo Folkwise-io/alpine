@@ -1,5 +1,5 @@
 import prog from 'caporal';
-import { META } from '../common/constants';
+import { META, CLI } from '../common/constants';
 import { messages } from '../config';
 import {
   cast, getPackage, getLibrary, env,
@@ -22,7 +22,7 @@ const configure = cli => (method) => {
   cli = cli.action((args) => {
     // Will throw if an invalid/unsupported type is mapped
     const argv = Object.values(args).map((arg, i) => cast(arg, parameters[i].type));
-    method(...argv);
+    method(...argv, CLI);
   });
 
   return cli;
