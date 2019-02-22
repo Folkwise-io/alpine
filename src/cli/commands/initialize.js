@@ -62,7 +62,7 @@ function projectPrompts(projectName) {
       properties: {
         author: {
           description: 'Project author',
-          required: true,
+          default: '',
         },
         name: {
           description: 'Project name',
@@ -76,7 +76,6 @@ function projectPrompts(projectName) {
           required: true,
         },
         license: {
-          // TODO: validate npmjs-supported licenses
           description: 'Project license',
           default: 'UNLICENSED',
           required: true,
