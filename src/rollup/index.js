@@ -27,7 +27,12 @@ module.exports = () => {
   }
 
   // Read the methods directory
-  const methodFiles = fs.readdirSync(methodsPath);
+  const files = fs.readdirSync(methodsPath);
+  const targetFileType = '.js';
+  const methodFiles = files.filter((filename) => {
+    const endOfName = filename.length - targetFileType.length;
+    return filename.indexOf(targetFileType) === endOfName;
+  });
 
   // Build the import strings
   const methodImports = [];
