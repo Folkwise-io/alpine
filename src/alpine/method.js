@@ -28,17 +28,21 @@ const testParameter = parameter => (arg) => {
   }
 };
 
-const AlpineMethod = (methodOptions) => {
-  const {
-    name, parameters, returns, value,
-  } = methodOptions;
-
+const validateMethodOptions = ({ name, value }) => {
   if (!name) {
     throw new TypeError('Missing method name');
   }
 
   if (!value) {
     throw new TypeError('Missing method value');
+  }
+};
+
+const AlpineMethod = (methodOptions = {}, internal = false) => {
+  const { parameters, returns, value } = methodOptions;
+
+  if (!internal) {
+    validateMethodOptions(methodOptions);
   }
 
   return (...args) => {
