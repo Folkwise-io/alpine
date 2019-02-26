@@ -2,8 +2,8 @@ import { META } from '../common/constants';
 import { simpleErrorHandler } from '../middleware/simpleErrorHandler'; // Default error handler
 
 // Allows an array of middleware to be applied to an AlpineMethod
-const AlpineMiddleware = (fns = []) => {
-  const middleware = [[...fns], [simpleErrorHandler]];
+const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
+  const middleware = [[...beforeAllMW], [...afterAllMW, simpleErrorHandler]];
 
   // TODO: Middleware on specific methods (hence beforeAll and afterAll naming)
 

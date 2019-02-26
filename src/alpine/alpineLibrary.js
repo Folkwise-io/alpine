@@ -11,8 +11,8 @@ const AlpineLibrary = (config = {}) => {
   Object.assign(opts, config);
 
   // Destructure important variables
-  const { methods, middleware } = opts;
-  const mwWrapper = AlpineMiddleware(middleware); // Used to wrap middleware on methods
+  const { methods, beforeAll: beforeAllMW, afterAll: afterAllMW } = opts;
+  const mwWrapper = AlpineMiddleware(beforeAllMW, afterAllMW); // Used to wrap middleware on methods
 
   // Build the library
   const library = {};
