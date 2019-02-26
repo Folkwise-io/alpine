@@ -1,15 +1,11 @@
 import AlpineLibrary from './alpineLibrary';
 import { getConfiguration, importDir } from '../common/utils';
 
-const Alpine = async (config = null) => {
+const Alpine = async (config = {}) => {
   const opts = {};
 
-  if (!config) {
-    config = await getConfiguration();
-  }
-
   // Get project configuration
-  Object.assign(opts, config);
+  Object.assign(opts, config, await getConfiguration());
 
   // Require all the methods
   if (!opts.methods) {
