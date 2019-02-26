@@ -47,7 +47,9 @@ module.exports = () => {
     const name = getMethodName(filename);
     methodsString += `${name},`;
   });
-  methodsString = methodsString.substring(0, methodsString.length - 1);
+  if (methodsString.length > 1) {
+    methodsString = methodsString.substring(0, methodsString.length - 1);
+  }
   methodsString += ']';
 
   // Template data
