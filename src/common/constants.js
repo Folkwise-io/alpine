@@ -10,6 +10,7 @@ const LIBRARY_ROOT = 'index.js';
 const VARIABLE_REGEX = /^[a-zA-Z_$][a-zA-Z_$0-9]*$/;
 
 const META = Symbol('META');
+const CLI = Symbol('CLI');
 
 export {
   TEMPLATES_PATH,
@@ -20,5 +21,6 @@ export {
   PACKAGE_JSON,
   LIBRARY_ROOT,
   VARIABLE_REGEX,
+  CLI,
   META,
 };
