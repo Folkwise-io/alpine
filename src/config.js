@@ -6,7 +6,7 @@ export const messages = {
   DUPLICATE: name => `Duplicate: ${name} has been defined more than once`,
   INVALID_TYPE: type => `Type '${type}' is not valid.`,
   UNSUPPORTED_TYPE: type => `Type '${type}' is not supported.`,
-  INVALID_PARAM_TYPE: (expected, received) => `Expected ${expected}, instead received ${received}.`,
+  INVALID_PARAM_TYPE: (expected, received) => `Expected ${expected}, instead received value \`${received}.\``,
   INVALID_PARAMETERS: (expected, received) => `Expected ${expected} parameter(s), instead received ${received}.`,
   VALIDATION_FAILURE: name => `${name} failed validation.`,
 };

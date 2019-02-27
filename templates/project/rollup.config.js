@@ -18,7 +18,7 @@ const baseConfig = {
       preferBuiltins: false,
     }),
     commonjs({
-      include: 'node_modules/**',
+      include: ['node_modules/**', 'alpine.conf.js'],
     }),
     json(),
     babel({

@@ -1,4 +1,5 @@
 import prog from 'caporal';
+import { red } from 'colors';
 import { META, CLI } from '../common/constants';
 import { messages } from '../config';
 import {
@@ -21,7 +22,19 @@ const configure = cli => (method) => {
   // Define the action of the command to be the target method
   cli = cli.action((args) => {
     // Will throw if an invalid/unsupported type is mapped
-    const argv = Object.values(args).map((arg, i) => cast(arg, parameters[i].type));
+    const argv = Object.values(args).map((arg, i) => {
+      let castedValue;
+
+      try {
+        castedValue = cast(arg, parameters[i].type);
+      } catch (e) {
+        console.error(red(e.message || e));
+        process.exit(0);
+      }
+
+      return castedValue;
+    });
+
     method(...argv, CLI);
   });
 
@@ -33,15 +46,17 @@ const Cli = async (executedCommand = process.argv[2]) => {
   const projectPackageJson = await getPackage();
 
   // Get project library
-  const projectLibrary = await getLibrary();
+  const { Alpine, ...projectLibrary } = await getLibrary();
 
   // Initialize the CLI
   let cmds = prog.version(projectPackageJson.version || env('0.0.1', MISSING_VERSION()));
 
+  // Filter CLI-enabled methods
   const cliCommands = Object.keys(projectLibrary).reduce((allCommands, key) => {
     const method = projectLibrary[key];
     const { cli } = method(META);
 
+    // CLI is disabled for this method, return previous `allCommands`
     if (cli === false) {
       return allCommands;
     }

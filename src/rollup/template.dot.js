@@ -1,9 +1,12 @@
 import AlpineLibrary from './node_modules/alpine/src/alpine/alpineLibrary';
+import config from '{{=it.project.confFile}}';
 
 {{~it.project.imports :value}}
 {{=value}}
 {{~}}
 
 export default AlpineLibrary({
-  methods: {{=it.project.methods}}
+  ...config,
+  build: true,
+  methods: {{=it.project.methods}},
 });

@@ -5,13 +5,13 @@
  * with one that explicitly requires each method.
  */
 
-const fs = require('fs-extra');
-const { processTemplate, getProjectRootSync } = require('../common/utils');
-const { CONF_FILENAME } = require('../common/constants');
+import fs from 'fs-extra';
+import { processTemplate, getProjectRootSync } from '../common/utils';
+import { CONF_FILENAME } from '../common/constants';
 
 const getMethodName = filename => filename.split('.')[0];
 
-module.exports = () => {
+const plugin = () => {
   const projectDir = getProjectRootSync();
 
   // Check to see if project configuration exists
@@ -27,7 +27,12 @@ module.exports = () => {
   }
 
   // Read the methods directory
-  const methodFiles = fs.readdirSync(methodsPath);
+  const files = fs.readdirSync(methodsPath);
+  const targetFileType = '.js';
+  const methodFiles = files.filter((filename) => {
+    const endOfName = filename.length - targetFileType.length;
+    return filename.indexOf(targetFileType) === endOfName;
+  });
 
   // Build the import strings
   const methodImports = [];
@@ -42,7 +47,9 @@ module.exports = () => {
     const name = getMethodName(filename);
     methodsString += `${name},`;
   });
-  methodsString = methodsString.substring(0, methodsString.length - 1);
+  if (methodsString.length > 1) {
+    methodsString = methodsString.substring(0, methodsString.length - 1);
+  }
   methodsString += ']';
 
   // Template data
@@ -50,6 +57,7 @@ module.exports = () => {
     project: {
       imports: methodImports,
       methods: methodsString,
+      confFile: `./${CONF_FILENAME}`,
     },
   };
 
@@ -67,3 +75,5 @@ module.exports = () => {
     },
   };
 };
+
+export default plugin;
