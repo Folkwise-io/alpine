@@ -1,13 +1,16 @@
 {
   "name": "alpine",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "A swift library creation tool.",
+  "main": "./cjs/index.js",
   "scripts": {
+    "start": "nodemon --watch src --exec \"npm run build\"",
+    "build": "babel src --out-dir cjs --copy-files",
+    "prepublishOnly": "npm run build",
     "test": "mocha"
   },
   "bin": {
-    "alpine": "./cli/index.js"
+    "alpine": "./cjs/cli/index.js"
   },
   "author": "Zero Projects, Inc",
   "license": "UNLICENSED",
@@ -25,13 +28,16 @@
     "v8n": "^1.2.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "chai": "^4.2.0",
     "eslint": "^5.11.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.10"
   }
 }

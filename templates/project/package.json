@@ -1,5 +1,5 @@
 {
-  "name": "{{=it.project.name}}",
+  "name": "{{=it.project.safeName}}",
   "version": "0.0.1",
   "description": "{{=it.project.description}}",
   "main": "dist/{{=it.project.name}}.cjs.js",
@@ -7,7 +7,7 @@
   "browser": "dist/{{=it.project.name}}.umd.js",
   "author": "{{=it.project.author}}",
   "license": "{{=it.project.license}}",
-  "private": "{{=it.project.private}}",
+  "private": {{=it.project.private}},
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -18,13 +18,12 @@
     "dist"
   ],
   "bin": {
-    "{{=it.project.name}}": "./cli.js"
+    "{{=it.project.safeName}}": "./cli.js"
   },
   "dependencies": {
+    {{? !it.options.development }}"alpine": "^0.0.1",{{?}}
     "@babel/polyfill": "^7.2.5",
-    "@babel/register": "^7.0.0",
-    "alpine": "^0.0.1",
-    "v8n": "^1.2.3"
+    "@babel/register": "^7.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -37,7 +36,6 @@
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "rollup": "^1.0.2",
-    "rollup-plugin-alpine": "^0.0.1",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
