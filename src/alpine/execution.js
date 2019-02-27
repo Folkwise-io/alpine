@@ -1,12 +1,12 @@
 import { META } from '../common/constants';
 
 export default (args, method) => {
-  const methodDefinition = method(META);
+  const meta = method(META);
 
   return {
     args,
     method,
-    methodDefinition,
+    meta,
     result: null,
     errors: [],
   };

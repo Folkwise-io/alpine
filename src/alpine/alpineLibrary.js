@@ -21,6 +21,7 @@ const AlpineLibrary = (config = {}) => {
       throw new Error(DUPLICATE(methodDefinition.name));
     }
 
+    // Wrap the AlpineMethod in the configured middleware
     library[methodDefinition.name] = middleware.wrap(AlpineMethod(methodDefinition));
   });
 

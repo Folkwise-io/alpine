@@ -2,22 +2,27 @@ import { META } from '../common/constants';
 import { simpleErrorHandler } from '../middleware/simpleErrorHandler'; // Default error handler
 import AlpineExec from './execution';
 
+const DEFAULT_ERR_HANDLER = simpleErrorHandler;
+
+// Append middleware
+function appendMiddleware(middleware, newMiddleware) {
+  return Array.isArray(newMiddleware)
+    ? [...middleware, ...newMiddleware]
+    : [...middleware, newMiddleware];
+}
+
 // Allows an array of middleware to be applied to an AlpineMethod
 const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
-  const middleware = [[...beforeAllMW], [...afterAllMW, simpleErrorHandler]];
+  const middleware = [[...beforeAllMW], [...afterAllMW]];
 
   // TODO: Middleware on specific methods (hence beforeAll and afterAll naming)
 
   return {
     beforeAll: (newMiddleware) => {
-      middleware[0] = Array.isArray(newMiddleware)
-        ? [...middleware[0], ...newMiddleware]
-        : [...middleware[0], newMiddleware];
+      middleware[0] = appendMiddleware(middleware[0], newMiddleware);
     },
     afterAll: (newMiddleware) => {
-      middleware[1] = Array.isArray(newMiddleware)
-        ? [...middleware[1].slice(0, -1), ...newMiddleware, simpleErrorHandler]
-        : [...middleware[1].slice(0, -1), newMiddleware, simpleErrorHandler];
+      middleware[1] = appendMiddleware(middleware[0], newMiddleware);
     },
     wrap: (method) => {
       const methodDefinition = method(META);
@@ -53,7 +58,6 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
             executePreMiddleware(remainingMw, ...nextArgs);
           });
         };
-        executePreMiddleware([...middleware[0]]); // Execute pre-method middleware
 
         // Post-method middleware
         const executePostMiddleware = (remainingMw, ...lastArgs) => {
@@ -87,7 +91,21 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
 
           executePostMiddleware(remainingMw);
         };
-        executePostMiddleware([...middleware[1]]); // Execute post-method middleware
+
+        const finalMW = {
+          beforeAll: [...middleware[0]],
+          afterAll: [...middleware[1]],
+        };
+
+        // If there is no configured error handler, add a default one
+        const hasErrorHandler = finalMW.afterAll.find(mw => mw.length > 2);
+        if (!hasErrorHandler) {
+          finalMW.afterAll = appendMiddleware(finalMW.afterAll, DEFAULT_ERR_HANDLER);
+        }
+
+        // Execute middleware and method
+        executePreMiddleware([...finalMW.beforeAll]);
+        executePostMiddleware([...finalMW.afterAll]);
 
         return execDetails.result;
       };
