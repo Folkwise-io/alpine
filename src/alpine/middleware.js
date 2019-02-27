@@ -56,41 +56,49 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
 
   // TODO: Middleware on specific methods (hence beforeAll and afterAll naming)
 
+  // Append pre-execution middleware
+  const beforeAll = (newMiddleware) => {
+    middleware[0] = appendMiddleware(middleware[0], newMiddleware);
+  };
+
+  // Append post-execution middleware
+  const afterAll = (newMiddleware) => {
+    middleware[1] = appendMiddleware(middleware[0], newMiddleware);
+  };
+
+  // Wrap the configured middleware around a method
+  const wrap = (method) => {
+    const methodDefinition = method(META);
+
+    // Intercept the method call
+    return (...args) => {
+      if (args.length > 0 && args[0] === META) {
+        return methodDefinition; // Return meta data if META symbol passed (don't execute)
+      }
+
+      // Save the execution details so they can be passed to middleware
+      const execDetails = AlpineExec(args, method);
+
+      // Flatten middleware and construct the middleware chain
+      const mwChain = [...middleware[0], executeMethod, ...middleware[1]];
+
+      // If there is no configured error handler, add a default one
+      const hasErrorHandler = mwChain.find(mw => mw.length > 2);
+      if (!hasErrorHandler) {
+        mwChain.push(DEFAULT_ERR_HANDLER);
+      }
+
+      // Execute the method with the middleware
+      executeMiddlewareChain(execDetails, mwChain);
+
+      return execDetails.result;
+    };
+  };
+
   return {
-    beforeAll: (newMiddleware) => {
-      middleware[0] = appendMiddleware(middleware[0], newMiddleware);
-    },
-    afterAll: (newMiddleware) => {
-      middleware[1] = appendMiddleware(middleware[0], newMiddleware);
-    },
-    wrap: (method) => {
-      const methodDefinition = method(META);
-
-      // Intercept the method call
-      return (...args) => {
-        // If a META symbol is passed, return the meta data of this method
-        if (args.length > 0 && args[0] === META) {
-          return methodDefinition;
-        }
-
-        // Save the execution details so they can be passed to middleware
-        const execDetails = AlpineExec(args, method);
-
-        // Flatten middleware and construct the middleware chain
-        const mwChain = [...middleware[0], executeMethod, ...middleware[1]];
-
-        // If there is no configured error handler, add a default one
-        const hasErrorHandler = mwChain.find(mw => mw.length > 2);
-        if (!hasErrorHandler) {
-          mwChain.push(DEFAULT_ERR_HANDLER);
-        }
-
-        // Execute the method with the middleware
-        executeMiddlewareChain(execDetails, mwChain);
-
-        return execDetails.result;
-      };
-    },
+    beforeAll,
+    afterAll,
+    wrap,
   };
 };
 
