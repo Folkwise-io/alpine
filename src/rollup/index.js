@@ -5,13 +5,13 @@
  * with one that explicitly requires each method.
  */
 
-const fs = require('fs-extra');
-const { processTemplate, getProjectRootSync } = require('../common/utils');
-const { CONF_FILENAME } = require('../common/constants');
+import fs from 'fs-extra';
+import { processTemplate, getProjectRootSync } from '../common/utils';
+import { CONF_FILENAME } from '../common/constants';
 
 const getMethodName = filename => filename.split('.')[0];
 
-module.exports = () => {
+const plugin = () => {
   const projectDir = getProjectRootSync();
 
   // Check to see if project configuration exists
@@ -57,6 +57,7 @@ module.exports = () => {
     project: {
       imports: methodImports,
       methods: methodsString,
+      confFile: `./${CONF_FILENAME}`,
     },
   };
 
@@ -74,3 +75,5 @@ module.exports = () => {
     },
   };
 };
+
+export default plugin;
