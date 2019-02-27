@@ -38,12 +38,10 @@ const validateMethodOptions = ({ name, value }) => {
   }
 };
 
-const AlpineMethod = (methodOptions = {}, internal = false) => {
+const AlpineMethod = (methodOptions = {}) => {
   const { parameters, returns, value } = methodOptions;
 
-  if (!internal) {
-    validateMethodOptions(methodOptions);
-  }
+  validateMethodOptions(methodOptions);
 
   return (...args) => {
     // If a META symbol is passed, return the meta data of this method
