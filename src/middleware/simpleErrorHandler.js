@@ -1,4 +1,4 @@
-export function simpleErrorHandler(err, args, method, next) {
+export function simpleErrorHandler(err, execDetails, next) {
   if (err instanceof Error) {
     console.log(`ERROR: ${err.message}`); // eslint-disable-line
   }

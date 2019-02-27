@@ -1,5 +1,6 @@
 import { META } from '../common/constants';
 import { simpleErrorHandler } from '../middleware/simpleErrorHandler'; // Default error handler
+import AlpineExec from './execution';
 
 // Allows an array of middleware to be applied to an AlpineMethod
 const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
@@ -28,22 +29,19 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
           return methodDefinition;
         }
 
-        // Default result
-        let result; // TODO: Allow this to be configurable
-
-        // Store errors that occur
-        const errors = [];
+        // Save the execution details so they can be passed to middleware
+        const execDetails = AlpineExec(args, method);
 
         // Pre-method middleware
         const executePreMiddleware = (remainingMw, ...lastArgs) => {
           const err = lastArgs.find(arg => arg instanceof Error);
           if (err) {
-            errors.push(err); // Store the error and avoid more pre-method middleware
+            execDetails.errors.push(err); // Store the error and avoid more pre-method middleware
             return;
           }
 
           if (!remainingMw || !remainingMw.length) {
-            result = method(...args);
+            execDetails.result = method(...execDetails.args);
             return;
           }
 
@@ -51,7 +49,7 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
           const currentMw = remainingMw.shift();
 
           // Execute the current middleware
-          currentMw(args, methodDefinition, (...nextArgs) => {
+          currentMw(execDetails, (...nextArgs) => {
             executePreMiddleware(remainingMw, ...nextArgs);
           });
         };
@@ -61,7 +59,7 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
         const executePostMiddleware = (remainingMw, ...lastArgs) => {
           const err = lastArgs.find(arg => arg instanceof Error);
           if (err) {
-            errors.push(err); // Store the error
+            execDetails.errors.push(err); // Store the error
           }
 
           if (!remainingMw || !remainingMw.length) {
@@ -71,20 +69,27 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
           // Get the next middleware
           const currentMw = remainingMw.shift();
 
-          // Skip current if an error has already occurred
-          if (errors.length) {
-            executePostMiddleware(remainingMw);
+          // Execute error handling middleware
+          if (currentMw.length > 2 && execDetails.errors.length) {
+            currentMw(execDetails.errors[0], execDetails, (...nextArgs) => {
+              executePostMiddleware(remainingMw, ...nextArgs);
+            });
             return;
           }
 
-          // Execute the current middleware
-          currentMw(result, args, methodDefinition, (...nextArgs) => {
-            executePostMiddleware(remainingMw, ...nextArgs);
-          });
+          // Execute normal middleware
+          if (currentMw.length === 2) {
+            currentMw(execDetails, (...nextArgs) => {
+              executePostMiddleware(remainingMw, ...nextArgs);
+            });
+            return;
+          }
+
+          executePostMiddleware(remainingMw);
         };
         executePostMiddleware([...middleware[1]]); // Execute post-method middleware
 
-        return result;
+        return execDetails.result;
       };
     },
   };
