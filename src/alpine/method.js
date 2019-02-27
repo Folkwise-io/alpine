@@ -1,4 +1,4 @@
-import { META, CLI } from '../common/constants';
+import { META } from '../common/constants';
 import { messages } from '../config';
 
 const { INVALID_PARAM_TYPE, INVALID_PARAMETERS, VALIDATION_FAILURE } = messages;
@@ -44,16 +44,8 @@ const AlpineMethod = (methodOptions = {}) => {
   validateMethodOptions(methodOptions);
 
   return (...args) => {
-    let cliEnvoked = false;
-
-    // If a META symbol is passed, return the meta data of this method
     if (args.length > 0 && args[0] === META) {
-      return methodOptions;
-    }
-
-    if (args[args.length - 1] === CLI) {
-      args = args.slice(0, -1);
-      cliEnvoked = true;
+      return methodOptions; // Return method meta data
     }
 
     // Validate the parameters that were passed
@@ -75,11 +67,6 @@ const AlpineMethod = (methodOptions = {}) => {
     // Validate the result of the function
     if (returns) {
       testParameter(returns)(result);
-    }
-
-    // Log the result if the CLI envoked the call
-    if (cliEnvoked) {
-      console.log(result); // eslint-disable-line
     }
 
     return result;
