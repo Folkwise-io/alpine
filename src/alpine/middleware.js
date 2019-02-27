@@ -1,5 +1,6 @@
 import { META } from '../common/constants';
 import { simpleErrorHandler } from '../middleware/simpleErrorHandler'; // Default error handler
+import { executeMethod } from '../middleware/executeMethod';
 import AlpineExec from './execution';
 
 const DEFAULT_ERR_HANDLER = simpleErrorHandler;
@@ -9,6 +10,44 @@ function appendMiddleware(middleware, newMiddleware) {
   return Array.isArray(newMiddleware)
     ? [...middleware, ...newMiddleware]
     : [...middleware, newMiddleware];
+}
+
+// Execute the chain of middleware (expects a 1D array)
+function executeMiddlewareChain(execDetails, mwChain = []) {
+  const execute = (remainingMw, ...lastArgs) => {
+    if (!remainingMw || !remainingMw.length) {
+      return; // Base case
+    }
+
+    // Get the current middleware
+    const currentMw = remainingMw.shift();
+
+    // Store errors from the last middleware
+    const err = lastArgs.find(arg => arg instanceof Error);
+    if (err) {
+      execDetails.errors.push(err);
+    }
+
+    // Error handling middleware
+    if (currentMw.length > 2 && execDetails.errors.length) {
+      currentMw(execDetails.errors[0], execDetails, (...nextArgs) => {
+        execute(remainingMw, ...nextArgs);
+      });
+      return;
+    }
+
+    // Normal middleware
+    if (currentMw.length === 2) {
+      currentMw(execDetails, (...nextArgs) => {
+        execute(remainingMw, ...nextArgs);
+      });
+      return;
+    }
+
+    // Skip this middleware
+    execute(remainingMw);
+  };
+  execute(mwChain);
 }
 
 // Allows an array of middleware to be applied to an AlpineMethod
@@ -37,75 +76,17 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
         // Save the execution details so they can be passed to middleware
         const execDetails = AlpineExec(args, method);
 
-        // Pre-method middleware
-        const executePreMiddleware = (remainingMw, ...lastArgs) => {
-          const err = lastArgs.find(arg => arg instanceof Error);
-          if (err) {
-            execDetails.errors.push(err); // Store the error and avoid more pre-method middleware
-            return;
-          }
-
-          if (!remainingMw || !remainingMw.length) {
-            execDetails.result = method(...execDetails.args);
-            return;
-          }
-
-          // Get the next middleware
-          const currentMw = remainingMw.shift();
-
-          // Execute the current middleware
-          currentMw(execDetails, (...nextArgs) => {
-            executePreMiddleware(remainingMw, ...nextArgs);
-          });
-        };
-
-        // Post-method middleware
-        const executePostMiddleware = (remainingMw, ...lastArgs) => {
-          const err = lastArgs.find(arg => arg instanceof Error);
-          if (err) {
-            execDetails.errors.push(err); // Store the error
-          }
-
-          if (!remainingMw || !remainingMw.length) {
-            return;
-          }
-
-          // Get the next middleware
-          const currentMw = remainingMw.shift();
-
-          // Execute error handling middleware
-          if (currentMw.length > 2 && execDetails.errors.length) {
-            currentMw(execDetails.errors[0], execDetails, (...nextArgs) => {
-              executePostMiddleware(remainingMw, ...nextArgs);
-            });
-            return;
-          }
-
-          // Execute normal middleware
-          if (currentMw.length === 2) {
-            currentMw(execDetails, (...nextArgs) => {
-              executePostMiddleware(remainingMw, ...nextArgs);
-            });
-            return;
-          }
-
-          executePostMiddleware(remainingMw);
-        };
-
-        const finalMW = {
-          beforeAll: [...middleware[0]],
-          afterAll: [...middleware[1]],
-        };
+        // Flatten middleware and construct the middleware chain
+        const mwChain = [...middleware[0], executeMethod, ...middleware[1]];
 
         // If there is no configured error handler, add a default one
-        const hasErrorHandler = finalMW.afterAll.find(mw => mw.length > 2);
+        const hasErrorHandler = mwChain.find(mw => mw.length > 2);
         if (!hasErrorHandler) {
-          finalMW.afterAll = appendMiddleware(finalMW.afterAll, DEFAULT_ERR_HANDLER);
+          mwChain.push(DEFAULT_ERR_HANDLER);
         }
 
-        // Execute middleware and method
-        executePreMiddleware([...finalMW.beforeAll]);
-        executePostMiddleware([...finalMW.afterAll]);
+        // Execute the method with the middleware
+        executeMiddlewareChain(execDetails, mwChain);
 
         return execDetails.result;
       };
