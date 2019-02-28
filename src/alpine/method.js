@@ -1,76 +1,17 @@
 import { META } from '../common/constants';
-import { messages } from '../config';
 
-const { INVALID_PARAM_TYPE, INVALID_PARAMETERS, VALIDATION_FAILURE } = messages;
+const AlpineMethod = (methodOptions = {}) => (...args) => {
+  const { value } = methodOptions;
 
-const testParameter = parameter => (arg) => {
-  const { type } = parameter;
-  let { validate: validators } = parameter;
-
-  // Check the type
-  if (type && typeof arg !== type) {
-    throw new TypeError(INVALID_PARAM_TYPE(type, typeof arg));
+  // Return method meta data when META symbol is passed
+  if (args.length > 0 && args[0] === META) {
+    return methodOptions;
   }
 
-  // Test the value against validators
-  if (validators != null) {
-    if (typeof validators === 'function') {
-      validators = [validators]; // Turn the validator into a list if just a function
-    }
+  // Execute the function
+  const result = value(...args);
 
-    let targetValidator;
-    while (validators.length > 0) {
-      targetValidator = validators.pop();
-      if (!targetValidator(arg)) {
-        throw new TypeError(VALIDATION_FAILURE(parameter.name || 'Unknown method'));
-      }
-    }
-  }
-};
-
-const validateMethodOptions = ({ name, value }) => {
-  if (!name) {
-    throw new TypeError('Missing method name');
-  }
-
-  if (!value) {
-    throw new TypeError('Missing method value');
-  }
-};
-
-const AlpineMethod = (methodOptions = {}) => {
-  const { parameters, returns, value } = methodOptions;
-
-  validateMethodOptions(methodOptions);
-
-  return (...args) => {
-    if (args.length > 0 && args[0] === META) {
-      return methodOptions; // Return method meta data
-    }
-
-    // Validate the parameters that were passed
-    if (parameters) {
-      const params = Array.isArray(parameters) ? parameters : [parameters];
-
-      if (args.length > params.length || args.length < params.length) {
-        throw new TypeError(INVALID_PARAMETERS(params.length, args.length));
-      }
-
-      params.forEach((parameter, i) => {
-        testParameter(parameter)(args[i]);
-      });
-    }
-
-    // Execute the function
-    const result = value(...args);
-
-    // Validate the result of the function
-    if (returns) {
-      testParameter(returns)(result);
-    }
-
-    return result;
-  };
+  return result;
 };
 
 export default AlpineMethod;
