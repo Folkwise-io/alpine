@@ -1,10 +1,13 @@
 import { META } from '../common/constants';
-import { simpleErrorHandler } from '../middleware/simpleErrorHandler'; // Default error handler
-import { executeMethod } from '../middleware/executeMethod';
-import { cliLogger } from '../middleware/cliLogger';
 import AlpineExec from './execution';
 
-const DEFAULT_ERR_HANDLER = simpleErrorHandler;
+// Internal middleware
+import { errorHandler } from '../middleware/errorHandler'; // Default error handler
+import { executeMethod } from '../middleware/executeMethod';
+import { cliLogger } from '../middleware/cliLogger';
+import { validateMethod, validateArguments, validateReturn } from '../middleware/validate';
+
+const DEFAULT_ERR_HANDLER = errorHandler;
 
 // Append middleware
 function appendMiddleware(middleware, newMiddleware) {
@@ -80,8 +83,16 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
       // Save the execution details so they can be passed to middleware
       const execDetails = AlpineExec(args, method);
 
-      // Flatten middleware and construct the middleware chain
-      const mwChain = [...middleware[0], executeMethod, cliLogger, ...middleware[1]];
+      // Flatten user middleware and construct the middleware chain
+      const mwChain = [
+        validateMethod,
+        ...middleware[0],
+        validateArguments,
+        executeMethod,
+        validateReturn,
+        ...middleware[1],
+        cliLogger,
+      ];
 
       // If there is no configured error handler, add a default one
       const hasErrorHandler = mwChain.find(mw => mw.length > 2);
