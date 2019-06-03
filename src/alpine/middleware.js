@@ -4,7 +4,7 @@ import AlpineExec from './execution';
 // Internal middleware
 import { errorHandler } from '../middleware/errorHandler'; // Default error handler
 import { executeMethod } from '../middleware/executeMethod';
-import { cliLogger } from '../middleware/cliLogger';
+import { cliHandler } from '../middleware/cliHandler';
 import { validateMethod, validateArguments, validateReturn } from '../middleware/validate';
 
 const DEFAULT_ERR_HANDLER = errorHandler;
@@ -91,7 +91,7 @@ const AlpineMiddleware = (beforeAllMW = [], afterAllMW = []) => {
         executeMethod,
         validateReturn,
         ...middleware[1],
-        cliLogger,
+        cliHandler,
       ];
 
       // If there is no configured error handler, add a default one
